@@ -24,9 +24,18 @@ interface HomeProps {
   postsPagination: PostPagination;
 }
 
-// export default function Home() {
-//   // TODO
-// }
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+export default function Home() {
+  return (
+    <main>
+      <div>
+        <h1>Como utilizar Hooks</h1>
+        <p>Pensando em sincronização em vez de ciclos de vida.</p>
+        <time>15 Mar 2021</time> <span>Luis Felipe</span>
+      </div>
+    </main>
+  );
+}
 
 // export const getStaticProps = async () => {
 //   // const prismic = getPrismicClient({});
