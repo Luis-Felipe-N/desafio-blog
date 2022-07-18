@@ -1,1 +1,28 @@
 // TODO
+.home {
+    max-width: 1120px;
+    margin: 0 auto;
+
+    .containerPosts {
+        h1 {
+            font-size: 1.75rem;
+        }
+
+        p {
+            margin: .5rem 0 1.5rem 0;
+            color: var(--gray-200);
+        }
+
+        time, span {
+            display: inline-flex;
+            gap: .5rem;
+            align-items: center;
+            margin-right: 1rem;
+            color: var(--gray-200);
+        }
+
+        div  {
+            margin-top: 3rem;
+        }
+    }
+}
