@@ -6,6 +6,8 @@ import commonStyles from '../styles/common.module.scss';
 
 import { AiOutlineUser,AiOutlineCalendar } from 'react-icons/ai'
 import style from './home.module.scss';
+import { RichText } from 'prismic-dom';
+import Link from 'next/link';
 
 interface Post {
   uid?: string;
@@ -32,43 +34,22 @@ export default function Home({posts}) {
   return (
     <main className={style.home}>
       <div className={style.containerPosts}>
-        <div>
-          <h1>Como utilizar Hooks</h1>
-          <p>Pensando em sincronização em vez de ciclos de vida.</p>
-          <time>
-            <AiOutlineCalendar />
-            15 Mar 2021
-          </time>
-          <span>
-            <AiOutlineUser />
-            Luis Felipe
-          </span>
-        </div>
-
-        <div>
-          <h1>Como utilizar Hooks</h1>
-          <p>Tudo sobre como criar a sua primeira aplicação utilizando Create React App.</p>
-          <time>
-            <AiOutlineCalendar />
-            15 Mar 2021
-          </time>
-          <span>
-            <AiOutlineUser />
-            Luis Felipe
-          </span>
-        </div>
-        <div>
-          <h1>Como utilizar Hooks</h1>
-          <p>Pensando em sincronização em vez de ciclos de vida.</p>
-          <time>
-            <AiOutlineCalendar />
-            15 Mar 2021
-          </time>
-          <span>
-            <AiOutlineUser />
-            Luis Felipe
-          </span>
-        </div>
+        {posts.map(post => (
+          <Link href={`/posts/${post.uid}`}>
+            <a>
+            <h1>{post.data.title}</h1>
+            <p>{post.data.subtitle}</p>
+            <time>
+              <AiOutlineCalendar />
+              {post.first_publication_date}
+            </time>
+            <span>
+              <AiOutlineUser />
+              {post.data.author}
+            </span>
+            </a>
+          </Link>
+        ))}
       </div>
     </main>
   );
@@ -76,11 +57,23 @@ export default function Home({posts}) {
 
 export const getStaticProps = async () => {
   const prismic = getPrismicClient({});
-  const postsResponse = await prismic.getAllByType('post');
+  const postsResponse = await prismic.getAllByType('posts');
   
+  const posts = postsResponse.map(post => {
+    return {
+      uid: post.uid,
+      first_publication_date: post.first_publication_date,
+      data: {
+        title: RichText.asText(post.data.title),
+        subtitle: post.data.subtitle ? RichText.asText(post.data.subtitle) : '',
+        author: RichText.asText(post.data.autor)
+      }
+    }
+  })
+
   return {
     props: {
-      posts: postsResponse
+      posts: posts
     }
   }
 };
