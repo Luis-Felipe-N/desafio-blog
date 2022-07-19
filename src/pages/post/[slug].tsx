@@ -19,7 +19,7 @@ interface Post {
       heading: string;
       body: {
         text: string;
-      }[];
+      };
     }[];
   };
 }
