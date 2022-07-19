@@ -8,6 +8,7 @@ import { AiOutlineUser,AiOutlineCalendar } from 'react-icons/ai'
 import style from '../styles/home.module.scss';
 import { RichText } from 'prismic-dom';
 import Link from 'next/link';
+import { useState } from 'react';
 
 interface Post {
   uid?: string;
@@ -29,12 +30,46 @@ interface HomeProps {
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-export default function Home({posts}) {
-  console.log(posts)
+export default function Home({postsPagination}: HomeProps) {
+  const [loading, setLoading] = useState(false)
+  const [nextPage, setNextPage] = useState(postsPagination.next_page)
+  const [results, setResults] = useState(postsPagination.results)
+
+  async function handleLoadMorePosts(next_page: string) {
+    try {
+      setLoading(true)
+      const results = await fetch(next_page)
+      const newResults = await results.json()
+      console.log(newResults)
+      const posts = newResults.results.map(post => {
+        return {
+          uid: post.uid,
+          first_publication_date: new Date(post.first_publication_date).toLocaleString('pt-BR', {
+            day: '2-digit',
+            month: 'long',
+            year: 'numeric'
+          }),
+          data: {
+            title: RichText.asText(post.data.title),
+            subtitle: post.data.subtitle ? RichText.asText(post.data.subtitle) : '',
+            author: RichText.asText(post.data.autor)
+          }
+        }
+      })
+      setNextPage(newResults.next_page)
+      setResults(currentResults => [...currentResults, ...posts])
+      setLoading(false)
+    } catch (error) {
+      // Mostrar mensagem de erro
+    }
+  }
+
   return (
     <main className={style.home}>
       <div className={style.containerPosts}>
-        {posts.map(post => (
+        {
+        results &&
+        results.map(post => (
           <Link href={`/post/${post.uid}`}>
             <a>
             <h1>{post.data.title}</h1>
@@ -51,15 +86,28 @@ export default function Home({posts}) {
           </Link>
         ))}
       </div>
+      {nextPage && (
+        <button
+        onClick={( ) => handleLoadMorePosts(nextPage)}
+      >
+        {loading ? (
+         <span> Carregando...</span>
+        ): (
+          <span>Carregar mais posts</span>
+        )}
+      </button>
+      )}
     </main>
   );
 }
 
-export const getStaticProps = async () => {
+export const getStaticProps: GetStaticProps = async ({previewData}) => {
   const prismic = getPrismicClient({});
-  const postsResponse = await prismic.getAllByType('posts');
+  const postsResponse = await prismic.getByType('posts', {
+    pageSize: 1,
+  });
   
-  const posts = postsResponse.map(post => {
+  const posts = postsResponse.results.map(post => {
     return {
       uid: post.uid,
       first_publication_date: new Date(post.first_publication_date).toLocaleString('pt-BR', {
@@ -75,9 +123,14 @@ export const getStaticProps = async () => {
     }
   })
 
+  const postsPagination = {
+    next_page: postsResponse.next_page,
+    results: posts
+  }
+
   return {
     props: {
-      posts: posts
+      postsPagination
     }
   }
 };
