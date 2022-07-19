@@ -5,7 +5,7 @@ import { getPrismicClient } from '../services/prismic';
 import commonStyles from '../styles/common.module.scss';
 
 import { AiOutlineUser,AiOutlineCalendar } from 'react-icons/ai'
-import style from './home.module.scss';
+import style from '../styles/home.module.scss';
 import { RichText } from 'prismic-dom';
 import Link from 'next/link';
 
@@ -35,7 +35,7 @@ export default function Home({posts}) {
     <main className={style.home}>
       <div className={style.containerPosts}>
         {posts.map(post => (
-          <Link href={`/posts/${post.uid}`}>
+          <Link href={`/post/${post.uid}`}>
             <a>
             <h1>{post.data.title}</h1>
             <p>{post.data.subtitle}</p>
@@ -62,7 +62,11 @@ export const getStaticProps = async () => {
   const posts = postsResponse.map(post => {
     return {
       uid: post.uid,
-      first_publication_date: post.first_publication_date,
+      first_publication_date: new Date(post.first_publication_date).toLocaleString('pt-BR', {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric'
+      }),
       data: {
         title: RichText.asText(post.data.title),
         subtitle: post.data.subtitle ? RichText.asText(post.data.subtitle) : '',

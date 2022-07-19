@@ -1,1 +1,36 @@
 // TODO
+.post {
+    &__hero img {
+        // width: 100vh;
+    }
+    
+    &__headline, &__content {
+        max-width: 1120px;
+        padding: 0 5%;
+        margin: 0 auto;
+
+    }
+
+    &__headline {
+        h1 {
+            font-size: 3rem;
+        }
+
+        div span{
+            margin-left: 1rem;
+        }
+
+        margin: 4rem auto;
+    }
+
+    &__content {
+        h2 {
+            font-size: 2.25rem;
+            margin-bottom: 1rem;
+        }
+
+        > div {
+            margin-bottom: 3rem;
+        }
+    }
+}

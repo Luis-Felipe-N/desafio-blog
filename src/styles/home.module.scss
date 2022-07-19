@@ -2,10 +2,12 @@
 .home {
     max-width: 1120px;
     margin: 0 auto;
+    padding: 0 5%;
 
     .containerPosts {
         h1 {
             font-size: 1.75rem;
+            color: var(--gray-100);
         }
 
         p {
@@ -23,6 +25,10 @@
 
         div  {
             margin-top: 3rem;
+        }
+
+        a {
+            text-decoration: none;
         }
     }
 }
